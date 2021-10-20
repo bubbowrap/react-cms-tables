@@ -35,8 +35,6 @@ const getFips = (zipcode) => {
 };
 
 const PlanSearch = () => {
-  let variableInfo = 'hey';
-
   const [data, setData] = useState([]);
   const [stateOptions, setStateOptions] = useState([]);
 
@@ -133,8 +131,6 @@ const PlanSearch = () => {
         )
         .then((res) => {
           setData(res.data.plans);
-
-          variableInfo = 'what';
         });
     });
   };
@@ -145,7 +141,6 @@ const PlanSearch = () => {
   return (
     <div className={classes['l-container']}>
       <h1>Plan Search</h1>
-      {variableInfo}
       <form onSubmit={SubmitHandler}>
         <Input
           label="Age"
@@ -157,6 +152,8 @@ const PlanSearch = () => {
             min: 16,
             max: 120,
             step: 1,
+            required: true,
+            placeholder: 65,
           }}
         />
         <Select
@@ -172,6 +169,8 @@ const PlanSearch = () => {
             id: 'income',
             type: 'number',
             name: 'income',
+            required: true,
+            placeholder: 1000000,
           }}
         />
         <Select
@@ -193,13 +192,15 @@ const PlanSearch = () => {
             id: 'zip_code',
             type: 'number',
             name: 'zip_code',
+            required: true,
+            placeholder: 32806,
           }}
         />
         <Select
           label="Plan Year"
           ref={planYearRef}
           select={{ id: 'plan_year', name: 'plan_year' }}
-          options={[2019, 2020, 2021]}
+          options={[2021, 2020, 2019]}
         />
         <Button button={{ type: 'submit' }}>Show Plans</Button>
       </form>
