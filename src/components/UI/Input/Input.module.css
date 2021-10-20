@@ -1,0 +1,18 @@
+.form-control {
+  display: inline-block;
+  margin: 0 0.5rem;
+}
+
+.form-control label {
+  display: inline-block;
+  font-weight: bold;
+}
+
+.form-control input {
+  display: block;
+  border-radius: 0.25rem;
+  padding: 0.5rem;
+  border: 0.0625rem solid #ccc;
+  font-size: 1rem;
+  margin: 0.25rem 0;
+}

@@ -1,0 +1,17 @@
+.header {
+  padding: 1rem;
+  background: black;
+  color: white;
+  font-family: sans-serif;
+}
+
+a {
+  color: white;
+  margin: 0 1rem;
+  text-decoration: none;
+}
+
+a:hover {
+  color: orange;
+  text-decoration: underline;
+}
