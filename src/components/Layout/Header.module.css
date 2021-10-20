@@ -5,13 +5,26 @@
   font-family: sans-serif;
 }
 
-a {
+.header a {
   color: white;
   margin: 0 1rem;
   text-decoration: none;
 }
 
-a:hover {
+.header a:first-child {
+  margin-left: 0;
+}
+
+.header a:hover {
   color: orange;
   text-decoration: underline;
+}
+
+.l-container {
+  width: 100%;
+  padding-right: 1rem;
+  padding-left: 1rem;
+  margin-right: auto;
+  margin-left: auto;
+  max-width: 75em;
 }
