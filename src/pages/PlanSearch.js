@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useCallback, useRef, useState } from 'react';
 import classes from '../App.module.css';
 import axios from 'axios';
 import { useTable } from 'react-table';
@@ -7,7 +7,7 @@ import Button from '../components/UI/Button/Button';
 import Input from '../components/UI/Input/Input';
 import Select from '../components/UI/Select/Select';
 
-const initialVariables = {
+let searchVariables = {
   household: {
     income: 50000,
     people: [
@@ -68,17 +68,23 @@ const PlanSearch = () => {
     []
   );
 
-  useEffect(() => {
+  const getPlans = useCallback(() => {
     //grab initial plan based on default variable object
     axios
       .post(
         `https://marketplace.api.healthcare.gov/api/v1/plans/search?apikey=${process.env.REACT_APP_CMS_APIKEY}`,
-        initialVariables
+        searchVariables
       )
       .then((res) => {
         setData(res.data.plans);
       });
+  }, []);
 
+  useEffect(() => {
+    getPlans();
+  }, [getPlans]);
+
+  useEffect(() => {
     //grab states and push to stateOptions array
     axios
       .get(
@@ -102,37 +108,31 @@ const PlanSearch = () => {
     // get fips
     let zipcode = Number(zipRef.current.value);
     let countyFips;
-    getFips(zipcode).then((res) => {
-      countyFips = res.data.counties[0].fips;
-      const inputVariables = {
-        household: {
-          income: Number(incomeRef.current.value),
-          people: [
-            {
-              age: Number(ageRef.current.value),
-              aptc_eligible: true,
-              gender: genderRef.current.value,
-              uses_tobacco: smokingRef.current.value === 'Yes' ? true : false,
-            },
-          ],
-        },
-        market: 'Individual',
-        place: {
-          countyfips: countyFips,
-          state: stateRef.current.value,
-          zipcode: zipRef.current.value,
-        },
-        year: Number(planYearRef.current.value),
-      };
-      axios
-        .post(
-          `https://marketplace.api.healthcare.gov/api/v1/plans/search?apikey=${process.env.REACT_APP_CMS_APIKEY}`,
-          inputVariables
-        )
-        .then((res) => {
-          setData(res.data.plans);
-        });
-    });
+    getFips(zipcode)
+      .then((res) => {
+        countyFips = res.data.counties[0].fips;
+        searchVariables = {
+          household: {
+            income: Number(incomeRef.current.value),
+            people: [
+              {
+                age: Number(ageRef.current.value),
+                aptc_eligible: true,
+                gender: genderRef.current.value,
+                uses_tobacco: smokingRef.current.value === 'Yes' ? true : false,
+              },
+            ],
+          },
+          market: 'Individual',
+          place: {
+            countyfips: countyFips,
+            state: stateRef.current.value,
+            zipcode: zipRef.current.value,
+          },
+          year: Number(planYearRef.current.value),
+        };
+      })
+      .then(() => getPlans());
   };
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
