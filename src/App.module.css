@@ -21,3 +21,11 @@ body {
   margin-left: auto;
   max-width: 75em;
 }
+
+h1 {
+  margin-bottom: 0.5rem;
+}
+
+form {
+  margin-top: 2rem;
+}
