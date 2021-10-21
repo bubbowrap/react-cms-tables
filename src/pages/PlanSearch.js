@@ -9,23 +9,23 @@ import Select from '../components/UI/Select/Select';
 
 const initialVariables = {
   household: {
-    income: 52000,
+    income: 50000,
     people: [
       {
-        age: 27,
+        age: 65,
         aptc_eligible: true,
-        gender: 'Female',
+        gender: 'Male',
         uses_tobacco: false,
       },
     ],
   },
   market: 'Individual',
   place: {
-    countyfips: '37057',
-    state: 'NC',
-    zipcode: '27007',
+    countyfips: '12095',
+    state: 'FL',
+    zipcode: '32806',
   },
-  year: 2020,
+  year: 2021,
 };
 
 const getFips = (zipcode) => {
@@ -141,6 +141,10 @@ const PlanSearch = () => {
   return (
     <div className={classes['l-container']}>
       <h1>Plan Search</h1>
+      <p>
+        Add some info, get some plans. The form placeholders are the initial
+        table values.
+      </p>
       <form onSubmit={SubmitHandler}>
         <Input
           label="Age"
@@ -170,7 +174,7 @@ const PlanSearch = () => {
             type: 'number',
             name: 'income',
             required: true,
-            placeholder: 1000000,
+            placeholder: 50000,
           }}
         />
         <Select
@@ -182,7 +186,7 @@ const PlanSearch = () => {
         <Select
           label="State"
           ref={stateRef}
-          select={{ id: 'state', name: 'state' }}
+          select={{ id: 'state', name: 'state', defaultValue: 'FL' }}
           options={stateOptions}
         />
         <Input
