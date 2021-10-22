@@ -1,5 +1,11 @@
 # Getting Started with Create React App
 
+IMPORTANT: Make a .env file for the API key named REACT_APP_CMS_APIKEY. So it'd be:
+
+REACT_APP_CMS_APIKEY=124567890
+
+With the real API key, obviously.
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
