@@ -6,6 +6,7 @@ import '../components/UI/Table.module.css';
 import Button from '../components/UI/Button/Button';
 //import Input from '../components/UI/Input/Input';
 import Select from '../components/UI/Select/Select';
+import Loader from '../components/UI/Loader/Loader';
 
 let searchVariables = {
   year: 2021,
@@ -15,6 +16,7 @@ let searchVariables = {
 const IssuerSearch = () => {
   const [data, setData] = useState([]);
   const [stateOptions, setStateOptions] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const { year, state } = searchVariables;
 
@@ -49,6 +51,7 @@ const IssuerSearch = () => {
   );
 
   const getIssuers = useCallback(() => {
+    setIsLoading(true);
     //function to grab providers based on queries
     axios
       .get(
@@ -56,6 +59,7 @@ const IssuerSearch = () => {
       )
       .then((res) => {
         setData(res.data.issuers);
+        setIsLoading(false);
       });
   }, [year, state]);
 
@@ -105,31 +109,37 @@ const IssuerSearch = () => {
         />
         <Button button={{ type: 'submit' }}>Search Issuers</Button>
       </form>
-      <table {...getTableProps()}>
-        <thead>
-          {headerGroups.map((headerGroup) => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps()}>{column.render('Header')}</th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody {...getTableBodyProps()}>
-          {rows.map((row) => {
-            prepareRow(row);
-            return (
-              <tr {...row.getRowProps()}>
-                {row.cells.map((cell) => {
-                  return (
-                    <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                  );
-                })}
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <table {...getTableProps()}>
+          <thead>
+            {headerGroups.map((headerGroup) => (
+              <tr {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map((column) => (
+                  <th {...column.getHeaderProps()}>
+                    {column.render('Header')}
+                  </th>
+                ))}
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
+            ))}
+          </thead>
+          <tbody {...getTableBodyProps()}>
+            {rows.map((row) => {
+              prepareRow(row);
+              return (
+                <tr {...row.getRowProps()}>
+                  {row.cells.map((cell) => {
+                    return (
+                      <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };
