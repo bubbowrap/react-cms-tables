@@ -1,0 +1,9 @@
+.loader {
+  position: absolute;
+  left: 50%;
+  top: 45%;
+}
+
+.loader svg path {
+  fill: blue;
+}
