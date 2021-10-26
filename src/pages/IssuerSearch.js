@@ -15,7 +15,7 @@ let searchVariables = {
 
 const IssuerSearch = () => {
   const [data, setData] = useState([]);
-  const [stateOptions, setStateOptions] = useState([]);
+  const [stateOptions, setStateOptions] = useState(['FL']);
   const [isLoading, setIsLoading] = useState(true);
 
   const { year, state } = searchVariables;
@@ -70,7 +70,7 @@ const IssuerSearch = () => {
         `https://marketplace.api.healthcare.gov/api/v1/states?apikey=${process.env.REACT_APP_CMS_APIKEY}`
       )
       .then((res) => {
-        let stateArray = res.data.states.map((state) => state.abbrev);
+        let stateArray = res.data.states.map((state) => state.abbrev).sort();
         setStateOptions([...stateArray]);
       });
   }, []);
