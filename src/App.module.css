@@ -29,3 +29,11 @@ h1 {
 form {
   margin-top: 2rem;
 }
+
+.error {
+  background: rgba(255, 0, 0, 0.1);
+  color: red;
+  margin: 1rem auto;
+  padding: 1rem;
+  text-align: center;
+}

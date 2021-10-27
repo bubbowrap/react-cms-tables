@@ -16,31 +16,29 @@ const Home = () => {
         of stuff, so ask Jeremy or Blaine if there's features you want/something
         you want to see.
       </p>
-      <p>
-        <strong>Uses this stuff:</strong>
-        <ul>
-          <li>
-            <a
-              href="https://react-table.tanstack.com/docs/"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              https://react-table.tanstack.com/docs/
-            </a>
-          </li>
-          <li>
-            <a
-              href="https://marketplaceapicms.docs.apiary.io/"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              https://marketplaceapicms.docs.apiary.io/
-            </a>
-          </li>
-          <li>React</li>
-          <li>Netlify for deployment</li>
-        </ul>
-      </p>
+      <strong>Uses this stuff:</strong>
+      <ul>
+        <li>
+          <a
+            href="https://react-table.tanstack.com/docs/"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            https://react-table.tanstack.com/docs/
+          </a>
+        </li>
+        <li>
+          <a
+            href="https://marketplaceapicms.docs.apiary.io/"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            https://marketplaceapicms.docs.apiary.io/
+          </a>
+        </li>
+        <li>React</li>
+        <li>Netlify for deployment</li>
+      </ul>
     </div>
   );
 };

@@ -1,14 +1,14 @@
 import React, { useEffect, useCallback, useRef, useState } from 'react';
 import classes from '../App.module.css';
 import axios from 'axios';
-import { useTable } from 'react-table';
-import '../components/UI/Table.module.css';
+import { usePagination, useTable } from 'react-table';
+import table from '../components/UI/Table.module.css';
 import Button from '../components/UI/Button/Button';
 import Input from '../components/UI/Input/Input';
 import Select from '../components/UI/Select/Select';
 import Loader from '../components/UI/Loader/Loader';
 
-let searchVariables = {
+let initialVariables = {
   household: {
     income: 50000,
     people: [
@@ -26,6 +26,7 @@ let searchVariables = {
     state: 'FL',
     zipcode: '32806',
   },
+  offset: 0,
   year: 2021,
 };
 
@@ -37,8 +38,12 @@ const getFips = (zipcode) => {
 
 const PlanSearch = () => {
   const [data, setData] = useState([]);
+  const [searchVariables, setSearchVariables] = useState(initialVariables);
   const [stateOptions, setStateOptions] = useState(['FL']);
   const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState();
+
+  const [currentOffset, setCurrentOffset] = useState(0);
 
   const ageRef = useRef('');
   const incomeRef = useRef('');
@@ -50,6 +55,10 @@ const PlanSearch = () => {
 
   const columns = React.useMemo(
     () => [
+      {
+        Header: 'ID',
+        accessor: 'id',
+      },
       {
         Header: 'Name',
         accessor: 'name',
@@ -72,6 +81,9 @@ const PlanSearch = () => {
 
   const getPlans = useCallback(() => {
     setIsLoading(true);
+
+    // get current offset. if current offset is 0 only show next. if greater than 1 show prev/next buttons. On click decrement/increment offset by 1.
+
     //grab initial plan based on default variable object
     axios
       .post(
@@ -81,12 +93,32 @@ const PlanSearch = () => {
       .then((res) => {
         setData(res.data.plans);
         setIsLoading(false);
+        setIsError();
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        setIsError(err);
       });
-  }, []);
+  }, [searchVariables]);
 
   useEffect(() => {
     getPlans();
   }, [getPlans]);
+
+  const firstUpdate = useRef(true);
+  useEffect(() => {
+    if (firstUpdate.current) {
+      firstUpdate.current = false;
+      return;
+    }
+
+    setSearchVariables((prevSearchVariables) => {
+      return {
+        ...prevSearchVariables,
+        offset: currentOffset,
+      };
+    });
+  }, [currentOffset]);
 
   useEffect(() => {
     //grab states and push to stateOptions array
@@ -100,47 +132,49 @@ const PlanSearch = () => {
       });
   }, []);
 
-  // Input Change function
-  // const handleInputChange = (e) => {
-  //   const target = e.target;
-  //   const value = target.type === 'checkbox' ? target.checked : target.value;
-  // };
+  const increaseOffset = () => {
+    setCurrentOffset((prevOffset) => prevOffset + 1);
+  };
+
+  const decreaseOffset = () => {
+    setCurrentOffset((prevOffset) => prevOffset - 1);
+  };
 
   const SubmitHandler = (e) => {
     e.preventDefault();
+    setCurrentOffset(0);
 
     // get fips
     let zipcode = Number(zipRef.current.value);
     let countyFips;
-    getFips(zipcode)
-      .then((res) => {
-        countyFips = res.data.counties[0].fips;
-        searchVariables = {
-          household: {
-            income: Number(incomeRef.current.value),
-            people: [
-              {
-                age: Number(ageRef.current.value),
-                aptc_eligible: true,
-                gender: genderRef.current.value,
-                uses_tobacco: smokingRef.current.value === 'Yes' ? true : false,
-              },
-            ],
-          },
-          market: 'Individual',
-          place: {
-            countyfips: countyFips,
-            state: stateRef.current.value,
-            zipcode: zipRef.current.value,
-          },
-          year: Number(planYearRef.current.value),
-        };
-      })
-      .then(() => getPlans());
+    getFips(zipcode).then((res) => {
+      countyFips = res.data.counties[0].fips;
+      setSearchVariables({
+        household: {
+          income: Number(incomeRef.current.value),
+          people: [
+            {
+              age: Number(ageRef.current.value),
+              aptc_eligible: true,
+              gender: genderRef.current.value,
+              uses_tobacco: smokingRef.current.value === 'Yes' ? true : false,
+            },
+          ],
+        },
+        market: 'Individual',
+        place: {
+          countyfips: countyFips,
+          state: stateRef.current.value,
+          zipcode: zipRef.current.value,
+        },
+        offset: currentOffset,
+        year: Number(planYearRef.current.value),
+      });
+    });
   };
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable({ columns, data });
+    useTable({ columns, data }, usePagination);
 
   return (
     <div className={classes['l-container']}>
@@ -212,36 +246,49 @@ const PlanSearch = () => {
         />
         <Button button={{ type: 'submit' }}>Show Plans</Button>
       </form>
-      {isLoading ? (
-        <Loader />
-      ) : (
-        <table {...getTableProps()}>
-          <thead>
-            {headerGroups.map((headerGroup) => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column) => (
-                  <th {...column.getHeaderProps()}>
-                    {column.render('Header')}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody {...getTableBodyProps()}>
-            {rows.map((row) => {
-              prepareRow(row);
-              return (
-                <tr {...row.getRowProps()}>
-                  {row.cells.map((cell) => {
-                    return (
-                      <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                    );
-                  })}
+      {isError && (
+        <p className={classes.error}>
+          Something went wrong. Make sure the zip code exists in that state!
+        </p>
+      )}
+      {isLoading && <Loader />}
+      {!isLoading && !isError && (
+        <>
+          <table {...getTableProps()}>
+            <thead>
+              {headerGroups.map((headerGroup) => (
+                <tr {...headerGroup.getHeaderGroupProps()}>
+                  {headerGroup.headers.map((column) => (
+                    <th {...column.getHeaderProps()}>
+                      {column.render('Header')}
+                    </th>
+                  ))}
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
+              ))}
+            </thead>
+            <tbody {...getTableBodyProps()}>
+              {rows.map((row) => {
+                prepareRow(row);
+                return (
+                  <tr {...row.getRowProps()}>
+                    {row.cells.map((cell) => {
+                      return (
+                        <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+
+          <div className={table.pagination}>
+            <button onClick={decreaseOffset} disabled={currentOffset === 0}>
+              {'<'}
+            </button>
+            <button onClick={increaseOffset}>{'>'}</button>
+          </div>
+        </>
       )}
     </div>
   );
