@@ -143,12 +143,13 @@ const PlanSearch = () => {
   const SubmitHandler = (e) => {
     e.preventDefault();
     setCurrentOffset(0);
-
+    
     // get fips
     let zipcode = Number(zipRef.current.value);
     let countyFips;
     getFips(zipcode).then((res) => {
       countyFips = res.data.counties[0].fips;
+
       setSearchVariables({
         household: {
           income: Number(incomeRef.current.value),
@@ -167,7 +168,7 @@ const PlanSearch = () => {
           state: stateRef.current.value,
           zipcode: zipRef.current.value,
         },
-        offset: currentOffset,
+        offset: 0,
         year: Number(planYearRef.current.value),
       });
     });
