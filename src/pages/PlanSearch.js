@@ -133,11 +133,11 @@ const PlanSearch = () => {
   }, []);
 
   const increaseOffset = () => {
-    setCurrentOffset((prevOffset) => prevOffset + 1);
+    setCurrentOffset((prevOffset) => prevOffset + 10);
   };
 
   const decreaseOffset = () => {
-    setCurrentOffset((prevOffset) => prevOffset - 1);
+    setCurrentOffset((prevOffset) => prevOffset - 10);
   };
 
   const SubmitHandler = (e) => {
