@@ -23,7 +23,9 @@ body {
 }
 
 h1 {
-  margin-bottom: 0.5rem;
+  font-size:2rem;
+  font-weight: bold;
+  margin: 1.5rem 0 1rem;
 }
 
 form {
