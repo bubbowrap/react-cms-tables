@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import './App.module.css';
 import Home from './pages/Home';
 import PlanSearch from './pages/PlanSearch';
@@ -11,7 +11,6 @@ import Header from './components/Layout/Header';
 const App = () => {
   return (
     <div>
-      <BrowserRouter>
         <Header />
         <Switch>
           <Route path="/" component={Home} exact />
@@ -19,7 +18,6 @@ const App = () => {
           <Route path="/provider-search" component={ProviderSearch} />
           <Route path="/issuer-search" component={IssuerSearch} />
         </Switch>
-      </BrowserRouter>
     </div>
   );
 };
