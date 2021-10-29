@@ -56,8 +56,8 @@ const PlanSearch = () => {
   const columns = React.useMemo(
     () => [
       {
-        Header: 'ID',
-        accessor: 'id',
+        Header: 'Issuer',
+        accessor: 'issuer.name',
       },
       {
         Header: 'Name',
@@ -72,8 +72,8 @@ const PlanSearch = () => {
         accessor: 'premium_w_credit',
       },
       {
-        Header: 'EHB Premium',
-        accessor: 'ehb_premium',
+        Header: 'Type',
+        accessor: 'type',
       },
     ],
     []
